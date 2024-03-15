@@ -4,7 +4,7 @@ const cheerio = require("cheerio");
 const openai = require("openai")
 // const utf8 = require('utf8');
 // import OpenAI from "openai";
-import Config from 'react-native-config';
+const iconv = require('iconv-lite')
 
 
 /**
@@ -58,7 +58,27 @@ let articleStruct = { num: 0, paragraph: "" };
 async function getLawText(url) {
     try {
         // Fetch HTML of the page we want to scrape
-        const { data } = await axios.get(url);
+        // Way 1:
+        let { data } = await axios.get(url);
+        // data = iconv.decode(data, 'windows-1251');
+        // data = iconv.decode(data, 'utf8');
+
+        // Way 2:
+        // let options = {
+        //     method: 'GET',
+        //     url: url,
+        //     // responseType: 'json',
+        //     // charset: 'utf8',
+        //     responseEncoding: 'win-1251'
+        // };
+        //
+        // const { data } = axios.request(options).then(function (response) {
+        //     console.log(response.data)
+        //     return response.data;
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
+
         // Load HTML we fetched in the previous line
         const $ = cheerio.load(data);
         // Select all the list items in Article class
@@ -103,10 +123,10 @@ async function getLawText(url) {
 module.exports = { simplify, getLawText };
 
 // let article_num = 100;
-// let lawText = getLawText(roadTrafficActUrl);
+let lawText = getLawText(roadTrafficActUrl);
 // lawText.then((value) => {
 //     console.log(value[article_num])
 // })
 // console.log("lawText: " + lawText);
 // simplify(lawText[article_num].paragraph);
-simplify("");
+// simplify("");
