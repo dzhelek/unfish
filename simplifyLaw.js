@@ -51,69 +51,34 @@ let articleStruct = { num: 0, paragraph: "" };
 
 /**
  * @param   url     Link to the official legal gate containing the law
- // * @returns {Promise<[{paragraph: string, num: number}]>}
+ * @returns {Promise<[{paragraph: string, num: number}]>}
  * Scrapes the official legal gate containing the given law, and stores all articles
  * with their paragraphs in the articles[] array.
  */
 async function getLawText(url) {
     try {
         // Fetch HTML of the page we want to scrape
-        // Way 1:
         let { data } = await axios.get(url);
-        console.log(data);
-        // data = iconv.decode(data, 'windows-1251');
-        // data = iconv.decode(data, 'utf8');
-
-        // Way 2:
-        // let options = {
-        //     method: 'GET',
-        //     url: url,
-        //     // responseType: 'json',
-        //     // charset: 'utf8',
-        //     responseEncoding: 'win-1251'
-        // };
-        //
-        // const { data } = axios.request(options).then(function (response) {
-        //     console.log(response.data)
-        //     return response.data;
-        // }).catch(function (error) {
-        //     console.log(error);
-        // });
 
         // Load HTML we fetched in the previous line
         const $ = cheerio.load(data);
+
         // Select all the list items in Article class
         const listItems = $(".Article");
+
         // Stores data for all articles
-        const articles = [{ num: 0, paragraph: "" }];
+        const articles = [{ article: 0, text: "" }];
 
         // Use .each method to loop through the li we selected
         listItems.each((idx, el) => {
-            // Object holding data for each country/jurisdiction
-            const article = { num: 0, paragraph: "" };
-            article.num = parseInt($(el).children("div").text().split(" ")[1].slice(0, -1));
-            // console.log(article.num);
-
-            article.paragraph = $(el).children("div").text();
-
-            // Should decode to UTF-8
-            // const paragraph = $(el).children("div").text();
-            // article.paragraph = utf8.encode(paragraph);
-            // article.paragraph = Buffer.from(paragraph, 'utf-8').toString('utf-8');
+            // Object holding data for each law article
+            const article = { article: 0, text: "" };
+            article.article = parseInt($(el).children("div").text().split(" ")[1].slice(0, -1));
+            article.text = $(el).children("div").text();
 
             articles.push(article);
-
-            // // Select the text content of a and span elements
-            // // Store the textcontent in the above object
-            // article.num = $(el).children("a").text();
-            // article.paragraph = $(el).children("span").text();
-            // // Populate articles array with country data
-            // articles.push(article);
         });
-        // Logs articles array to the console
-        // console.dir(articles);
 
-        // return articles, articles[article_num-1].paragraph;
         return articles;
 
     } catch (err) {
@@ -191,5 +156,8 @@ function findCitedArticles(violationActText) {
 // simplify(lawText[article_num].paragraph);
 // simplify("");
 
-findCitedArticles("");
-
+let citedArticlesArray = findCitedArticles("");
+let lawText = getLawText(roadTrafficActUrl);
+lawText.then((value) => {
+    console.log(value[citedArticlesArray[0].article])
+})
