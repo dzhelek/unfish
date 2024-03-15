@@ -25,7 +25,8 @@
     "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
     "pretty": "^2.0.0",
-    "openai": "^4.29.0"
+    "openai": "^4.29.0",
+    "iconv-lite": "^0.6.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
