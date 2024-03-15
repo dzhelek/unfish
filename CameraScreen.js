@@ -33,7 +33,7 @@ const processImage = async (photo) => {
     const textAnnotations = response.data.responses[0].textAnnotations;
     if (textAnnotations && textAnnotations.length > 0) {
       const extractedText = textAnnotations[0].description;
-      console.log('Extracted text:', extractedText);
+      return extractedText;
       // Now you have the extracted text, you can pass it to the next screen or perform further processing
     } else {
       throw new Error('No text found in the image.');
@@ -45,7 +45,7 @@ const processImage = async (photo) => {
 
 
 
-function CameraScreen() {
+function CameraScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
 
@@ -60,8 +60,10 @@ function CameraScreen() {
     if (cameraRef) {
       let photo = await cameraRef.takePictureAsync();
       // Process the captured image (e.g., text recognition)
-      processImage(photo); 
+      const text = await processImage(photo); 
+      console.log('Extracted text:', text);
       // Display results on another screen
+      navigation.navigate('Result', { extractedText: text}); // Navigate to ResultScreen and pass the extracted text
     }
   };
 

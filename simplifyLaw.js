@@ -60,6 +60,7 @@ async function getLawText(url) {
         // Fetch HTML of the page we want to scrape
         // Way 1:
         let { data } = await axios.get(url);
+        console.log(data);
         // data = iconv.decode(data, 'windows-1251');
         // data = iconv.decode(data, 'utf8');
 
@@ -91,7 +92,7 @@ async function getLawText(url) {
             // Object holding data for each country/jurisdiction
             const article = { num: 0, paragraph: "" };
             article.num = parseInt($(el).children("div").text().split(" ")[1].slice(0, -1));
-            console.log(article.num);
+            // console.log(article.num);
 
             article.paragraph = $(el).children("div").text();
 
