@@ -1,13 +1,9 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-// const fs = require("fs");
 const openai = require("openai")
-// const utf8 = require('utf8');
-// import OpenAI from "openai";
 const iconv = require('iconv-lite')
 const {readableStreamAsyncIterable} = require("openai/streaming");
-
-module.exports = { simplify, getLawText };
+// require('dotenv').config();
 
 /**
  * @param   law_paragraph    The text of the article that should be explained.
@@ -24,7 +20,7 @@ async function simplify(law_paragraph) {
         "6. (нова - ДВ, бр. 101 от 2016 г., в сила от 21.01.2017 г., изм. - ДВ, бр. 2 от 2018 г., в сила от 20.05.2018 г.) документ, отразяващ датата за извършване на следващия периодичен преглед за проверка на техническата изправност, удостоверяващ, че моторното превозно средство, което управлява, и тегленото от него ремарке се допускат за движение по пътищата, отворени за обществено ползване.";
     console.log("Law paragraph: " + law_paragraph);
 
-    const openAiInstance = new openai.OpenAI({apiKey: process.env.EXPO_PUBLIC_GPT_KEY})
+    const openAiInstance = new openai.OpenAI({apiKey: process.env.OPENAI_API_KEY})
 
     const prompt = "Explain that law in Bulgarian in a simple way: " + law_paragraph;
     const completion = await openAiInstance.chat.completions.create({
@@ -44,7 +40,7 @@ async function simplify(law_paragraph) {
 
 // URL of the page we want to scrape
 // export const roadTrafficActUrl = "https://lex.bg/mobile/ldoc/2134649345";
-const roadTrafficActUrl = "https://lex.bg/mobile/ldoc/2134649345";
+export const roadTrafficActUrl = "https://lex.bg/mobile/ldoc/2134649345";
 
 let articleStruct = { num: 0, paragraph: "" };
 
@@ -78,14 +74,13 @@ async function getLawText(url) {
             articles.push(article);
         });
 
+        console.dir(articles);
         return articles;
 
     } catch (err) {
         console.error(err);
     }
 }
-
-lawToPrint = {article: 0, paragraph: 0};
 
 /**
  * @param  {string} violationActText                the text the of the violation act
@@ -137,8 +132,8 @@ function findCitedArticles(violationActText) {
 
     lawsToPrint = []
     let i = 0;
-    for (article in articles) {
-        lawsToPrint.push({article: articles[article], paragraph: paragraphs[i++]});
+    for (const article of articles) {
+        lawsToPrint.push({articleId: article, paragraphId: paragraphs[i++]});
     }
 
     console.log('lawsToPrint: ');
@@ -155,17 +150,20 @@ function findCitedArticles(violationActText) {
 // simplify(lawText[article_num].paragraph);
 // simplify("");
 
-function findArticle(fullLawText, articleId) {
+function findArticleText(fullLawText, articleId) {
     return fullLawText[articleId];
 }
 
-let citedArticlesArray = findCitedArticles("");
-let lawText = getLawText(roadTrafficActUrl);
-lawText.then((value) => {
-    for (article in citedArticlesArray) {
-        articleText = findArticle(value, citedArticlesArray[article].article);
-        let simplifiedText = simplify(articleText);
-        console.log(simplifiedText);
-    }
-    // console.log(value[citedArticlesArray[0].article])
-})
+
+// let citedArticlesArray = findCitedArticles("");
+// let lawText = getLawText(roadTrafficActUrl);
+// lawText.then((value) => {
+//     for (const article of citedArticlesArray) {
+//         const articleText = findArticleText(value, article.articleId);
+//         const simplifiedText = simplify(articleText);
+//         console.log(simplifiedText);
+//     }
+//     // console.log(value[citedArticlesArray[0].article])
+// })
+
+module.exports = {findCitedArticles, getLawText, findArticleText, simplify};
