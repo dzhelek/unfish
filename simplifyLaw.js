@@ -123,6 +123,15 @@ async function getLawText(url) {
 
 lawToPrint = {article: 0, paragraph: 0};
 
+/**
+ * @param  {string} violationActText                the text the of the violation act
+ *                                                      (the string with the scanned image)
+ * @return {[article: number, paragraph: number]}   an array including all the mentioned articles
+ *                                                      and their paragraphs in the text of the
+ *                                                      scanned image
+ * Identifies all the articles mentioned in the text of the fine. Those are the articles and
+ * paragraphs that would be found in the legal texts, simplified and printed afterward.
+ */
 function findCitedArticles(violationActText) {
     violationActText = "LOG  Extracted text: Серия/Series GT, №2732808\n" +
         "РЕПУБЛИКА БЪЛГАРИЯ\n" +
