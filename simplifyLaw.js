@@ -160,28 +160,12 @@ function findCitedArticles(violationActText) {
         "ГЛОБАТА С ФИШ НЕ ПОДЛЕЖИ НА ОБЖАЛВАНЕ\n" +
         "THIS TRAFFIC VIOLATION TICKET IS NOT SUBJECT TO APPEAL";
 
-    // Matches both (чл. 186) and (ЧЛ.186)
-    // const searchStr = '((чл.)|(ЧЛ.))\\s+([0-9]+)';
     const articleSearchStr = '(чл.)\\s+([0-9]+)';
     const paragraphSearchStr = '((АЛ)|(ал))[\\.\\/\\sa-zA-Z]*[1-9]+';
-
-    toPrint = [];
-    // while ( (result = regex.exec(violationActText)) ) {
-    //     // Replace all leading non-digits in a matched text with nothing, leave digits only
-    //     let article = result.replace(/^\D+/g, '');
-    //     // ((АЛ)|(ал))[\.\/]*[a-zA-Z\s]*[1-9]+ --> ал./paragraph 1
-    //     // ((АЛ)|(ал))([\.\/\s]*[a-zA-Z]*)[1-9]+ --> АЛ. 3
-    //     // ((АЛ)|(ал))[\.\/\sa-zA-Z]*[1-9]+/g
-    //
-    //     let paragraph =
-    //
-    //     toPrint.push();
-    // }
 
     const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => parseInt(a[0].replace(/^\D+/g, '')));
     console.log('articles: ')
     console.log(articles); // [182, 25]
-
 
     const paragraphs = [...violationActText.matchAll(new RegExp(paragraphSearchStr, 'gi'))].map(a => parseInt(a[0].replace(/^\D+/g, '')));
     console.log('paragraphs: ');
@@ -196,10 +180,6 @@ function findCitedArticles(violationActText) {
     console.log('lawsToPrint: ');
     console.log(lawsToPrint);
     return lawsToPrint;
-
-
-    // const indexes = [...violationActText.matchAll(new RegExp(articlesearchStr, 'gi'))].map(a => a.index);
-    // console.log(indexes); // [2, 25, 27, 33]
 }
 
 // let article_num = 100;
@@ -212,3 +192,4 @@ function findCitedArticles(violationActText) {
 // simplify("");
 
 findCitedArticles("");
+
