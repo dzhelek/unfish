@@ -5,6 +5,7 @@ const openai = require("openai")
 // const utf8 = require('utf8');
 // import OpenAI from "openai";
 const iconv = require('iconv-lite')
+const {readableStreamAsyncIterable} = require("openai/streaming");
 
 module.exports = { simplify, getLawText };
 
@@ -23,8 +24,7 @@ async function simplify(law_paragraph) {
         "6. (нова - ДВ, бр. 101 от 2016 г., в сила от 21.01.2017 г., изм. - ДВ, бр. 2 от 2018 г., в сила от 20.05.2018 г.) документ, отразяващ датата за извършване на следващия периодичен преглед за проверка на техническата изправност, удостоверяващ, че моторното превозно средство, което управлява, и тегленото от него ремарке се допускат за движение по пътищата, отворени за обществено ползване.";
     console.log("Law paragraph: " + law_paragraph);
 
-
-    const openAiInstance = new openai.OpenAI({apiKey: process.env.GPT_KEY})
+    const openAiInstance = new openai.OpenAI({apiKey: process.env.EXPO_PUBLIC_GPT_KEY})
 
     const prompt = "Explain that law in Bulgarian in a simple way: " + law_paragraph;
     const completion = await openAiInstance.chat.completions.create({
@@ -47,7 +47,6 @@ async function simplify(law_paragraph) {
 const roadTrafficActUrl = "https://lex.bg/mobile/ldoc/2134649345";
 
 let articleStruct = { num: 0, paragraph: "" };
-
 
 /**
  * @param   url     Link to the official legal gate containing the law
@@ -156,8 +155,17 @@ function findCitedArticles(violationActText) {
 // simplify(lawText[article_num].paragraph);
 // simplify("");
 
+function findArticle(fullLawText, articleId) {
+    return fullLawText[articleId];
+}
+
 let citedArticlesArray = findCitedArticles("");
 let lawText = getLawText(roadTrafficActUrl);
 lawText.then((value) => {
-    console.log(value[citedArticlesArray[0].article])
+    for (article in citedArticlesArray) {
+        articleText = findArticle(value, citedArticlesArray[article].article);
+        let simplifiedText = simplify(articleText);
+        console.log(simplifiedText);
+    }
+    // console.log(value[citedArticlesArray[0].article])
 })
