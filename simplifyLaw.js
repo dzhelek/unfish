@@ -163,7 +163,7 @@ function findCitedArticles(violationActText) {
     // Matches both (чл. 186) and (ЧЛ.186)
     // const searchStr = '((чл.)|(ЧЛ.))\\s+([0-9]+)';
     const articleSearchStr = '(чл.)\\s+([0-9]+)';
-    const paragraphSearchStr = '((АЛ)|(ал))[\.\/\sa-zA-Z]*[1-9]+/g';
+    const paragraphSearchStr = '((АЛ)|(ал))[\\.\\/\\sa-zA-Z]*[1-9]+';
 
     toPrint = [];
     // while ( (result = regex.exec(violationActText)) ) {
@@ -178,21 +178,19 @@ function findCitedArticles(violationActText) {
     //     toPrint.push();
     // }
 
-    // const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => a.toString().replace(/^\D+/g, ''));
-    const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => a[0].replace(/^\D+/g, ''));
+    const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => parseInt(a[0].replace(/^\D+/g, '')));
     console.log('articles: ')
     console.log(articles); // [182, 25]
 
 
-    // const paragraphs = [...violationActText.matchAll(new RegExp(paragraphSearchStr, 'gi'))].map(a => a[0].replace(/^\D+/g, ''));
-    const paragraphs = [...violationActText.matchAll(new RegExp(paragraphSearchStr, 'gi'))].map(a => a.toString().replace(/^\D+/g, ''));
+    const paragraphs = [...violationActText.matchAll(new RegExp(paragraphSearchStr, 'gi'))].map(a => parseInt(a[0].replace(/^\D+/g, '')));
     console.log('paragraphs: ');
     console.log(paragraphs); // [2, 3]
 
     lawsToPrint = []
     let i = 0;
     for (article in articles) {
-        lawsToPrint.push({article: parseInt(articles[article]), paragraph: paragraphs[i++]});
+        lawsToPrint.push({article: articles[article], paragraph: paragraphs[i++]});
     }
 
     console.log('lawsToPrint: ');
