@@ -1,6 +1,9 @@
 import CameraScreen from './CameraScreen';
 import ResultScreen from './ResultScreen';
 
+import {roadTrafficActUrl} from "./simplifyLaw";
+const simplifyLaw = require("./simplifyLaw");
+
 import React from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
