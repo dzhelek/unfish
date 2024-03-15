@@ -1,21 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
-import Tesseract from 'tesseract.js';
+import * as FileSystem from 'expo-file-system';
+
+import axios from 'axios';
 
 const processImage = async (photo) => {
   try {
-    const { data: { text } } = await Tesseract.recognize(photo.uri, 'bul', { // 'bul' for Bulgarian language
-      tessedit_char_blacklist: '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~', // Blacklist unwanted characters
+    // Encode the image to base64 format
+    let base64Image = await FileSystem.readAsStringAsync(photo.uri, { encoding: FileSystem.EncodingType.Base64 });
+
+    // Make a POST request to Google Cloud Vision API
+    const response = await axios.post(`https://vision.googleapis.com/v1/images:annotate?key=${process.env.EXPO_PUBLIC_GOOGLE_KEY}`, {
+      requests: [
+        {
+          image: {
+            content: base64Image,
+          },
+          features: [
+            {
+              type: 'TEXT_DETECTION', // Perform text detection
+            },
+          ],
+          imageContext: {
+            languageHints: ['bg'], // Specify Bulgarian language
+          },
+        },
+      ],
     });
-    console.log('Extracted text:', text);
-    // Now you have the extracted text, you can pass it to the next screen or perform further processing
-    navigation.navigate('Result', { extractedText: text }); // Navigate to ResultScreen and pass the extracted text
+
+    // Extract text from the response
+    const textAnnotations = response.data.responses[0].textAnnotations;
+    if (textAnnotations && textAnnotations.length > 0) {
+      const extractedText = textAnnotations[0].description;
+      console.log('Extracted text:', extractedText);
+      // Now you have the extracted text, you can pass it to the next screen or perform further processing
+    } else {
+      throw new Error('No text found in the image.');
+    }
   } catch (error) {
     console.error('Error extracting text:', error);
   }
 };
+
+
 
 function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -31,8 +59,8 @@ function CameraScreen() {
   const takePicture = async () => {
     if (cameraRef) {
       let photo = await cameraRef.takePictureAsync();
-      processImage(photo); 
       // Process the captured image (e.g., text recognition)
+      processImage(photo); 
       // Display results on another screen
     }
   };
@@ -47,7 +75,7 @@ function CameraScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Camera style={{ flex: 1 }} type={type} ref={(ref) => (cameraRef = ref)}>
-        <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row' }}>
+        <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'column' }}>
           <Button
             title="Take Picture"
             onPress={takePicture}

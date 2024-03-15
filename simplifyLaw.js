@@ -4,6 +4,7 @@ const cheerio = require("cheerio");
 const openai = require("openai")
 // const utf8 = require('utf8');
 // import OpenAI from "openai";
+import Config from 'react-native-config';
 
 
 /**
@@ -22,7 +23,7 @@ async function simplify(law_paragraph) {
     console.log("Law paragraph: " + law_paragraph);
 
 
-    const openAiInstance = new openai.OpenAI({apiKey: ''})
+    const openAiInstance = new openai.OpenAI({apiKey: process.env.GPT_KEY})
 
 
     const prompt = "Explain that law in Bulgarian in a simple way: " + law_paragraph;
