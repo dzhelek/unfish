@@ -6,6 +6,7 @@ const openai = require("openai")
 // import OpenAI from "openai";
 const iconv = require('iconv-lite')
 
+module.exports = { simplify, getLawText };
 
 /**
  * @param   law_paragraph    The text of the article that should be explained.
@@ -24,7 +25,6 @@ async function simplify(law_paragraph) {
 
 
     const openAiInstance = new openai.OpenAI({apiKey: process.env.GPT_KEY})
-
 
     const prompt = "Explain that law in Bulgarian in a simple way: " + law_paragraph;
     const completion = await openAiInstance.chat.completions.create({
@@ -120,13 +120,87 @@ async function getLawText(url) {
     }
 }
 
-module.exports = { simplify, getLawText };
+lawToPrint = {article: 0, paragraph: 0};
+
+function findCitedArticles(violationActText) {
+    violationActText = "LOG  Extracted text: Серия/Series GT, №2732808\n" +
+        "РЕПУБЛИКА БЪЛГАРИЯ\n" +
+        "REPUBLIC OF BULGARIA\n" +
+        "МИНИСТЕРСТВО НА ВЪТРЕШНИТЕ РАБОТИ\n" +
+        "MINISTRY OF\n" +
+        "INTERIOR\n" +
+        "ГЛОБА С ФИШ\n" +
+        "TRAFFIC VIOLATION TICKET\n" +
+        "Днес/Today, 10.03.2024г., подписаният/, I the undersigned\n" +
+        "АНТОНИО ИВОВ ЙОРДАНОВ, на длъжност/position occupied МЛ.\n" +
+        "АВТОКОНТРОЛЬОР при/with СДВР, ОТДЕЛ ПЪТНА ПОЛИЦИЯ СДВР,\n" +
+        "установих, чеe/have witnessed that ЙОАН ПЕТРОВ ДЖЕЛЕКАРСКИ\n" +
+        "ЕГН/ЛНЧ/PIN/PNF 0347316407\n" +
+        "Постоянен адрес/Resident at permanent address : СОФИЯ,\n" +
+        "СТОЛИЧНА, ГР. СОФИЯ, УЛ. ЦАРЕВЕЦ, № 26, ет. 7, ап. 28\n" +
+        "B/in Гр София на/оп 10.03.2024 B/at 12:57\n" +
+        "е извършил нарушение/committed a violation ПЕШЕХОДЕЦ НЕ\n" +
+        "ПРЕМИНАВА ПО ПЕШЕХОДНА ПЪТЕКА., по чл./as per article 113.\n" +
+        "ал./paragraph 1 от ЗДВП/of the Road Traffic Act, поради което\n" +
+        "на основание чл. 186/and therefore on the grounds of Article 186.\n" +
+        "Във връзка с чл./and in connection with article ЧЛ. 184 АЛ. 3\n" +
+        "от ЗДвП/оf Road Traffic Act, налагам глоба/I hereby impose a fine\n" +
+        "in the amount of двадесет (20) лева/BGN\n" +
+        "НАЛОЖИЛ ГЛОБАТА/OFFICER IMPOSING THE FINE....\n" +
+        "ГЛОБАТА С ФИШ НЕ ПОДЛЕЖИ НА ОБЖАЛВАНЕ\n" +
+        "THIS TRAFFIC VIOLATION TICKET IS NOT SUBJECT TO APPEAL";
+
+    // Matches both (чл. 186) and (ЧЛ.186)
+    // const searchStr = '((чл.)|(ЧЛ.))\\s+([0-9]+)';
+    const articleSearchStr = '(чл.)\\s+([0-9]+)';
+    const paragraphSearchStr = '((АЛ)|(ал))[\.\/\sa-zA-Z]*[1-9]+/g';
+
+    toPrint = [];
+    // while ( (result = regex.exec(violationActText)) ) {
+    //     // Replace all leading non-digits in a matched text with nothing, leave digits only
+    //     let article = result.replace(/^\D+/g, '');
+    //     // ((АЛ)|(ал))[\.\/]*[a-zA-Z\s]*[1-9]+ --> ал./paragraph 1
+    //     // ((АЛ)|(ал))([\.\/\s]*[a-zA-Z]*)[1-9]+ --> АЛ. 3
+    //     // ((АЛ)|(ал))[\.\/\sa-zA-Z]*[1-9]+/g
+    //
+    //     let paragraph =
+    //
+    //     toPrint.push();
+    // }
+
+    // const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => a.toString().replace(/^\D+/g, ''));
+    const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => a[0].replace(/^\D+/g, ''));
+    console.log('articles: ')
+    console.log(articles); // [182, 25]
+
+
+    // const paragraphs = [...violationActText.matchAll(new RegExp(paragraphSearchStr, 'gi'))].map(a => a[0].replace(/^\D+/g, ''));
+    const paragraphs = [...violationActText.matchAll(new RegExp(paragraphSearchStr, 'gi'))].map(a => a.toString().replace(/^\D+/g, ''));
+    console.log('paragraphs: ');
+    console.log(paragraphs); // [2, 3]
+
+    lawsToPrint = []
+    let i = 0;
+    for (article in articles) {
+        lawsToPrint.push({article: parseInt(articles[article]), paragraph: paragraphs[i++]});
+    }
+
+    console.log('lawsToPrint: ');
+    console.log(lawsToPrint);
+    return lawsToPrint;
+
+
+    // const indexes = [...violationActText.matchAll(new RegExp(articlesearchStr, 'gi'))].map(a => a.index);
+    // console.log(indexes); // [2, 25, 27, 33]
+}
 
 // let article_num = 100;
-let lawText = getLawText(roadTrafficActUrl);
+// let lawText = getLawText(roadTrafficActUrl);
 // lawText.then((value) => {
 //     console.log(value[article_num])
 // })
 // console.log("lawText: " + lawText);
 // simplify(lawText[article_num].paragraph);
 // simplify("");
+
+findCitedArticles("");
