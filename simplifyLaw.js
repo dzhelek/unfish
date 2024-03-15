@@ -119,7 +119,7 @@ function findCitedArticles(violationActText) {
         "ГЛОБАТА С ФИШ НЕ ПОДЛЕЖИ НА ОБЖАЛВАНЕ\n" +
         "THIS TRAFFIC VIOLATION TICKET IS NOT SUBJECT TO APPEAL";
 
-    const articleSearchStr = '(чл.)\\s+([0-9]+)';
+    const articleSearchStr = '((чл.)|(ЧЛ.))[\\.\\/\\sa-zA-Z]*[1-9]+';
     const paragraphSearchStr = '((АЛ)|(ал))[\\.\\/\\sa-zA-Z]*[1-9]+';
 
     const articles = [...violationActText.matchAll(new RegExp(articleSearchStr, 'gi'))].map(a => parseInt(a[0].replace(/^\D+/g, '')));
@@ -130,7 +130,7 @@ function findCitedArticles(violationActText) {
     console.log('paragraphs: ');
     console.log(paragraphs); // [2, 3]
 
-    lawsToPrint = []
+    let lawsToPrint = []
     let i = 0;
     for (const article of articles) {
         lawsToPrint.push({articleId: article, paragraphId: paragraphs[i++]});
