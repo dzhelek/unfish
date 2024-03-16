@@ -18,8 +18,9 @@ const ResultScreen = () => {
     const simplifiedText = simplify(articleText);
 
     simplifiedText.then((value) => {
-      allSimplifiedTexts += simplifiedText + "\n\n";
-      console.log('simplifiedText: ' + simplifiedText);
+      console.log('simplifiedText value (openai): ' + value);
+      allSimplifiedTexts += value + "\n\n";
+      console.log('simplifiedText: ' + value);
     })
   }
 

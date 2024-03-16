@@ -77,9 +77,12 @@ function findArticleText(fullLawText, articleId) {
 async function simplify(law_paragraph) {
     console.log("Law paragraph: " + law_paragraph);
 
-    const openAiInstance = new openai.OpenAI({apiKey: process.env.OPENAI_API_KEY})
+    console.log("API Key: " + process.env.EXPO_PUBLIC_GPT_KEY);
+    const openAiInstance = new openai.OpenAI({apiKey: process.env.EXPO_PUBLIC_GPT_KEY})
+    console.log("Connected with apikey...")
 
     const prompt = "Explain that law in Bulgarian in a simple way: " + law_paragraph;
+    console.log("Explaining...")
     const completion = await openAiInstance.chat.completions.create({
         messages: [{ role: "system", content: prompt }],
         model: "gpt-3.5-turbo",
