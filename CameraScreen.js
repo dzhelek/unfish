@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
+import {findCitedArticles, findArticleText, simplify, roadTrafficActUrl} from "./simplifyLaw";
+import lawFile from './law.json';
 
 import axios from 'axios';
 
@@ -56,6 +58,24 @@ function CameraScreen({ navigation }) {
     })();
   }, []);
 
+  const computeResults = async(extractedText) => {
+    let citedArticlesArray = findCitedArticles(extractedText);
+    // let lawText = getLawText(roadTrafficActUrl);
+    let allSimplifiedTexts = "";
+
+    for (const article of citedArticlesArray) {
+      console.log('article: ' + article);
+      const articleText = (lawFile.find((item) => item.articleId === article)).text;
+      const simplifiedText = await simplify(articleText);
+
+        console.log('simplifiedText value (openai): ' +simplifiedText);
+        allSimplifiedTexts += simplifiedText+ "\n\n";
+        console.log('accumulating: ' + allSimplifiedTexts);
+      
+      return allSimplifiedTexts;
+    }
+}
+
   const takePicture = async () => {
     if (cameraRef) {
       let photo = await cameraRef.takePictureAsync();
@@ -63,7 +83,9 @@ function CameraScreen({ navigation }) {
       const text = await processImage(photo); 
       console.log('Extracted text:', text);
       // Display results on another screen
-      navigation.navigate('Result', { extractedText: text}); // Navigate to ResultScreen and pass the extracted text
+      const results = await computeResults(text);
+      console.log("before sending: " + results);
+      navigation.navigate('Result', {result: results}); // Navigate to ResultScreen and pass the extracted text
     }
   };
 

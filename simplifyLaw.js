@@ -2,7 +2,6 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const openai = require("openai")
 // require('dotenv').config();
-const lawFile = require('./law.json');
 
 // URL of the page we want to scrape
 export const roadTrafficActUrl = "https://lex.bg/mobile/ldoc/2134649345";
@@ -77,7 +76,6 @@ function findArticleText(fullLawText, articleId) {
 async function simplify(law_paragraph) {
     console.log("Law paragraph: " + law_paragraph);
 
-    console.log("API Key: " + process.env.EXPO_PUBLIC_GPT_KEY);
     const openAiInstance = new openai.OpenAI({apiKey: process.env.EXPO_PUBLIC_GPT_KEY})
     console.log("Connected with apikey...")
 
