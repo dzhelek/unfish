@@ -1,25 +1,36 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import {findCitedArticles, getLawText, findArticleText,
-  simplify, roadTrafficActUrl} from "./simplifyLaw";
+import {findCitedArticles, findArticleText, simplify, roadTrafficActUrl} from "./simplifyLaw";
+import lawFile from './law.json';
 
 const ResultScreen = () => {
   const route = useRoute();
   const { extractedText } = route.params;
 
   let citedArticlesArray = findCitedArticles(extractedText);
-  let lawText = getLawText(roadTrafficActUrl);
+  // let lawText = getLawText(roadTrafficActUrl);
   let allSimplifiedTexts = "";
 
-  lawText.then((fullLawText) => {
-    for (const article of citedArticlesArray) {
-      const articleText = findArticleText(fullLawText, article.articleId);
-      const simplifiedText = simplify(articleText);
+  for (const article of citedArticlesArray) {
+    console.log('article: ' + article);
+    const articleText = (lawFile.find((item) => item.articleId === article)).text;
+    const simplifiedText = simplify(articleText);
+
+    simplifiedText.then((value) => {
       allSimplifiedTexts += simplifiedText + "\n\n";
-      console.log(simplifiedText);
-    }
-  })
+      console.log('simplifiedText: ' + simplifiedText);
+    })
+  }
+
+  // lawText.then((fullLawText) => {
+  //   for (const article of citedArticlesArray) {
+  //     const articleText = findArticleText(fullLawText, article.articleId);
+  //     const simplifiedText = simplify(articleText);
+  //     allSimplifiedTexts += simplifiedText + "\n\n";
+  //     console.log(simplifiedText);
+  //   }
+  // })
 
 
   return (
