@@ -48,11 +48,11 @@ Unfish е приложение, интуитивно превеждащо зак
 
 ## [Презентация](HackTUESX-presentation.pptx)
 ## Използвани технологии
-* [Expo]("https://expo.dev/")
-* [Google Vision API]("https://cloud.google.com/vision/?hl=en")
-* [OpenAI API]("https://openai.com/blog/openai-api")
+* [Expo](https://expo.dev/)
+* [Google Vision API](https://cloud.google.com/vision/?hl=en)
+* [OpenAI API](https://openai.com/blog/openai-api)
 * JavaScript
 
 ## Автори - *Отчасти Лемниската*
-* [Виолета Кабаджова]("https://github.com/vkabadzhova") (ТУЕС'2022)
-* [Йоан Джелекарски]("https://github.com/dzhelek") (ТУЕС'2022)
+* [Виолета Кабаджова](https://github.com/vkabadzhova) (ТУЕС'2022)
+* [Йоан Джелекарски](https://github.com/dzhelek) (ТУЕС'2022)
