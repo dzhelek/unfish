@@ -72,8 +72,8 @@ function CameraScreen({ navigation }) {
         allSimplifiedTexts += simplifiedText+ "\n\n";
         console.log('accumulating: ' + allSimplifiedTexts);
       
-      return allSimplifiedTexts;
     }
+      return allSimplifiedTexts;
 }
 
   const takePicture = async () => {
