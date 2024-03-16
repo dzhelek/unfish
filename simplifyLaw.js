@@ -88,9 +88,9 @@ async function simplify(law_paragraph) {
         model: "gpt-3.5-turbo",
     });
 
-    console.log(completion.choices[0]);
+    console.log(completion.choices[0].message.content);
 
-    return completion.choices[0];
+    return completion.choices[0].message.content;
 }
 
 module.exports = {findCitedArticles, getLawText, findArticleText, simplify};

@@ -20,7 +20,7 @@ const ResultScreen = () => {
     simplifiedText.then((value) => {
       console.log('simplifiedText value (openai): ' + value);
       allSimplifiedTexts += value + "\n\n";
-      console.log('simplifiedText: ' + value);
+      console.log('allSimplifiedText: ' + value);
     })
   }
 
