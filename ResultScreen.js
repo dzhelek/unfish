@@ -23,16 +23,6 @@ const ResultScreen = () => {
     })
   }
 
-  // lawText.then((fullLawText) => {
-  //   for (const article of citedArticlesArray) {
-  //     const articleText = findArticleText(fullLawText, article.articleId);
-  //     const simplifiedText = simplify(articleText);
-  //     allSimplifiedTexts += simplifiedText + "\n\n";
-  //     console.log(simplifiedText);
-  //   }
-  // })
-
-
   return (
     <View>
       <Text>{allSimplifiedTexts}</Text>
